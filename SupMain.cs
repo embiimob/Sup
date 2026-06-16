@@ -815,12 +815,28 @@ namespace SUP
                                     try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
                                     Directory.CreateDirectory("ipfs/" + transid + "-build");
                                     Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+
+                                    bool _gatewaySuccess = false;
+                                    if (File.Exists("IPFS_API_HELPERS_ENABLED"))
+                                    {
+                                        _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(activeProfile.Image.Substring(5, 46), @"ipfs\" + transid);
+                                        if (_gatewaySuccess)
+                                        {
+                                            IpfsHelper.AddToLocalCacheAndPinIfEnabled(activeProfile.Image.Substring(5, 46), @"ipfs\" + transid);
+                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                        }
+                                    }
+
+                                    if (!_gatewaySuccess)
+                                    {
+                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                     process2.StartInfo.Arguments = "get " + activeProfile.Image.Substring(5, 46) + @" -o ipfs\" + transid;
                                     process2.StartInfo.UseShellExecute = false;
                                     process2.StartInfo.CreateNoWindow = true;
                                     process2.Start();
                                     process2.WaitForExit();
+                                    }
+
                                     string fileName;
                                     if (System.IO.File.Exists("ipfs/" + transid))
                                     {
@@ -1499,13 +1515,29 @@ namespace SUP
                                                     try { Directory.CreateDirectory("ipfs/" + transid); } catch { };
                                                     Directory.CreateDirectory("ipfs/" + transid + "-build");
                                                     Process process2 = new Process();
-                                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+
+                                                    bool _gatewaySuccess = false;
+                                                    if (File.Exists("IPFS_API_HELPERS_ENABLED"))
+                                                    {
+                                                        _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(objstate.Image.Substring(5, 46), @"ipfs\" + transid);
+                                                        if (_gatewaySuccess)
+                                                        {
+                                                            IpfsHelper.AddToLocalCacheAndPinIfEnabled(objstate.Image.Substring(5, 46), @"ipfs\" + transid);
+                                                            try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
+                                                        }
+                                                    }
+
+                                                    if (!_gatewaySuccess)
+                                                    {
+                                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
                                                     process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
                                                     process2.StartInfo.UseShellExecute = false;
                                                     process2.StartInfo.CreateNoWindow = true;
                                                     process2.Start();
 
-                                                    if (process2.WaitForExit(30000))
+                                                    }
+
+                                                    if (_gatewaySuccess || process2.WaitForExit(30000))
                                                     {
                                                         string fileName;
                                                         if (System.IO.File.Exists("ipfs/" + transid))
@@ -1887,13 +1919,14 @@ namespace SUP
 
                                                             string extension = GetNormalizedExtension(imgurn);
                                                             HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
 
                                                             string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                             Match vmatch = Regex.Match(content, vpattern);
 
 
-                                                            if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                            if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                             {
 
 
@@ -2313,13 +2346,14 @@ namespace SUP
 
                                                                 string extension = GetNormalizedExtension(imgurn);
                                                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
 
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
 
 
-                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -2687,9 +2721,10 @@ namespace SUP
 
                                                                 string extension = GetNormalizedExtension(imgurn);
                                                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -3042,9 +3077,10 @@ namespace SUP
 
                                                                 string extension = GetNormalizedExtension(imgurn);
                                                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -3403,9 +3439,10 @@ namespace SUP
 
                                                                 string extension = GetNormalizedExtension(imgurn);
                                                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
-                                                                if (!imgExtensions.Contains(extension) && vmatch.Value.Length < 12)
+                                                                if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && vmatch.Value.Length < 12)
                                                                 {
 
 
@@ -4758,6 +4795,7 @@ namespace SUP
 
                         string pattern = "<<.*?>>";
                         HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)
@@ -4781,7 +4819,7 @@ namespace SUP
                                 }
 
                                 string extension = GetNormalizedExtension(imgurn);
-                                if (!imgExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
+                                if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
                                 {
 
 
@@ -5546,6 +5584,7 @@ namespace SUP
 
                 Root decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, recipientAddress);
                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
                 if (decryptedroot.File != null)
                 {
@@ -5555,7 +5594,7 @@ namespace SUP
                         
                         this.Invoke((MethodInvoker)delegate
                         {
-                            if (!imgExtensions.Contains(extension))
+                            if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension))
                             {
                                 // Create a new panel to display non-media files
                                 Panel panel = new Panel();
@@ -5869,9 +5908,10 @@ namespace SUP
                             {
 
                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
                                 string extension = GetNormalizedExtension(content);
-                                if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
+                                if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
                                 {
                                     string title = content;
                                     string description = content;
@@ -6168,10 +6208,10 @@ namespace SUP
                                         bool _gatewaySuccess = false;
                                         if (File.Exists("IPFS_API_HELPERS_ENABLED"))
                                         {
-                                            _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(transid, imagelocation);
+                                            _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(imagepath.Substring(5, 46), imagelocation);
                                             if (_gatewaySuccess)
                                             {
-                                                IpfsHelper.AddToLocalCacheAndPinIfEnabled(transid, imagelocation);
+                                                IpfsHelper.AddToLocalCacheAndPinIfEnabled(imagepath.Substring(5, 46), imagelocation);
                                                 try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                             }
                                         }
@@ -6521,10 +6561,10 @@ namespace SUP
                                         bool _gatewaySuccess = false;
                                         if (File.Exists("IPFS_API_HELPERS_ENABLED"))
                                         {
-                                            _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(transid, imagelocation);
+                                            _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(imagepath.Substring(5, 46), imagelocation);
                                             if (_gatewaySuccess)
                                             {
-                                                IpfsHelper.AddToLocalCacheAndPinIfEnabled(transid, imagelocation);
+                                                IpfsHelper.AddToLocalCacheAndPinIfEnabled(imagepath.Substring(5, 46), imagelocation);
                                                 try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                             }
                                         }
@@ -6869,10 +6909,10 @@ namespace SUP
                                         bool _gatewaySuccess = false;
                                         if (File.Exists("IPFS_API_HELPERS_ENABLED"))
                                         {
-                                            _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(transid, videolocation);
+                                            _gatewaySuccess = IpfsHelper.TryGetFromPublicGateways(videopath.Substring(5, 46), videolocation);
                                             if (_gatewaySuccess)
                                             {
-                                                IpfsHelper.AddToLocalCacheAndPinIfEnabled(transid, videolocation);
+                                                IpfsHelper.AddToLocalCacheAndPinIfEnabled(videopath.Substring(5, 46), videolocation);
                                                 try { Directory.Delete("ipfs/" + transid + "-build", true); } catch { }
                                             }
                                         }
