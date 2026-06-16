@@ -63,7 +63,6 @@ namespace SUP
         {
             ".wav", ".mp3", ".ogg", ".oga", ".opus", ".flac", ".m4a", ".aac", ".wma", ".weba", ".webm"
         };
-        private static readonly HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
         private bool btcActive;
         private bool mzcActive;
@@ -831,12 +830,13 @@ namespace SUP
                                     if (!_gatewaySuccess)
                                     {
                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                        process2.StartInfo.Arguments = "get " + activeProfile.Image.Substring(5, 46) + @" -o ipfs\" + transid;
-                                        process2.StartInfo.UseShellExecute = false;
-                                        process2.StartInfo.CreateNoWindow = true;
-                                        process2.Start();
-                                        process2.WaitForExit();
+                                    process2.StartInfo.Arguments = "get " + activeProfile.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                    process2.StartInfo.UseShellExecute = false;
+                                    process2.StartInfo.CreateNoWindow = true;
+                                    process2.Start();
+                                    process2.WaitForExit();
                                     }
+
                                     string fileName;
                                     if (System.IO.File.Exists("ipfs/" + transid))
                                     {
@@ -1530,13 +1530,14 @@ namespace SUP
                                                     if (!_gatewaySuccess)
                                                     {
                                                         process2.StartInfo.FileName = @"ipfs\ipfs.exe";
-                                                        process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
-                                                        process2.StartInfo.UseShellExecute = false;
-                                                        process2.StartInfo.CreateNoWindow = true;
-                                                        process2.Start();
+                                                    process2.StartInfo.Arguments = "get " + objstate.Image.Substring(5, 46) + @" -o ipfs\" + transid;
+                                                    process2.StartInfo.UseShellExecute = false;
+                                                    process2.StartInfo.CreateNoWindow = true;
+                                                    process2.Start();
 
-                                                        if (process2.WaitForExit(30000)) { }
                                                     }
+
+                                                    if (_gatewaySuccess || process2.WaitForExit(30000))
                                                     {
                                                         string fileName;
                                                         if (System.IO.File.Exists("ipfs/" + transid))
@@ -1918,6 +1919,7 @@ namespace SUP
 
                                                             string extension = GetNormalizedExtension(imgurn);
                                                             HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
 
                                                             string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
@@ -2344,6 +2346,7 @@ namespace SUP
 
                                                                 string extension = GetNormalizedExtension(imgurn);
                                                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
 
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
@@ -2718,6 +2721,7 @@ namespace SUP
 
                                                                 string extension = GetNormalizedExtension(imgurn);
                                                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
                                                                 if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && vmatch.Value.Length < 12)
@@ -3073,6 +3077,7 @@ namespace SUP
 
                                                                 string extension = GetNormalizedExtension(imgurn);
                                                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
                                                                 if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && vmatch.Value.Length < 12)
@@ -3434,6 +3439,7 @@ namespace SUP
 
                                                                 string extension = GetNormalizedExtension(imgurn);
                                                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
                                                                 string vpattern = @"(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:[^/\n\s]*[/\n\s]*(?:v/|e(?:mbed)?/|.*[?&]v=))?)?([a-zA-Z0-9_-]{11})";
                                                                 Match vmatch = Regex.Match(content, vpattern);
                                                                 if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && vmatch.Value.Length < 12)
@@ -4789,6 +4795,7 @@ namespace SUP
 
                         string pattern = "<<.*?>>";
                         HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
                         MatchCollection matches = Regex.Matches(unfilteredmessage, pattern);
                         foreach (Match match in matches)
@@ -4812,7 +4819,7 @@ namespace SUP
                                 }
 
                                 string extension = GetNormalizedExtension(imgurn);
-                                if (!imgExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
+                                if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && !imgurn.Contains("youtube.com") && !imgurn.Contains("youtu.be"))
                                 {
 
 
@@ -5577,6 +5584,7 @@ namespace SUP
 
                 Root decryptedroot = Root.GetRootByTransactionId(transid, mainnetLogin, mainnetPassword, mainnetURL, mainnetVersionByte, result, recipientAddress);
                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
                 if (decryptedroot.File != null)
                 {
@@ -5586,7 +5594,7 @@ namespace SUP
                         
                         this.Invoke((MethodInvoker)delegate
                         {
-                            if (!imgExtensions.Contains(extension))
+                            if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension))
                             {
                                 // Create a new panel to display non-media files
                                 Panel panel = new Panel();
@@ -5900,9 +5908,10 @@ namespace SUP
                             {
 
                                 HashSet<string> imgExtensions = new HashSet<string>(CommonImageExtensions.Concat(CommonVideoExtensions).Concat(CommonAudioExtensions), StringComparer.OrdinalIgnoreCase);
+                                                            HashSet<string> objExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".json", ".glb" };
 
                                 string extension = GetNormalizedExtension(content);
-                                if (!imgExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
+                                if (!imgExtensions.Contains(extension) && !objExtensions.Contains(extension) && !content.Contains("youtube.com") && !content.Contains("youtu.be"))
                                 {
                                     string title = content;
                                     string description = content;
