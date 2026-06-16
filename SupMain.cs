@@ -3711,6 +3711,7 @@ namespace SUP
                             this.Invoke((MethodInvoker)delegate
                             {
                                 AddToSearchResults(foundobjects);
+                                RemoveOverFlowMessages(supFlow);
                             });
 
                         }
