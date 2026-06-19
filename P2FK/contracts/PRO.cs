@@ -320,11 +320,13 @@ namespace SUP.P2FK
 
 
             HashSet<string> addedValues = new HashSet<string>();
+            bool calculated = false;
 
             foreach (Root transaction in profileTransactions)
             {
                 if (transaction.Id > intProcessHeight)
                 {
+                    calculated = true;
                     intProcessHeight = transaction.Id;
                     //ignore any transaction that is not signed
                     if (transaction.Signed && transaction.File.ContainsKey("PRO") && ((profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy)) || profileState.Creators == null))
@@ -341,44 +343,10 @@ namespace SUP.P2FK
                             {
                                 if (isObject.Creators.Contains(findObject))
                                 {
-
                                     isObject.Id = profileTransactions.Max(max => max.Id);
                                     isObject.ProcessHeight = intProcessHeight;
-
-                                    var profileSerialized = JsonConvert.SerializeObject(isObject);
-                                    if (Root.WasLastFetchComplete(profileaddress))
-                                    {
-                                        bool canCommit = true;
-                                        try
-                                        {
-                                            JSONOBJ = System.IO.File.ReadAllText(profileUrnPath);
-                                            PROState existing = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
-                                            if (existing != null)
-                                            {
-                                                if (existing.Id > isObject.Id) { canCommit = false; }
-                                                else if (existing.Id == isObject.Id)
-                                                {
-                                                    // At equal cursor, keep the richer creator map.
-                                                    int existingCreators = existing.Creators == null ? 0 : existing.Creators.Count;
-                                                    int newCreators = isObject.Creators == null ? 0 : isObject.Creators.Count;
-                                                    if (existingCreators > newCreators) { canCommit = false; }
-                                                }
-                                            }
-                                        }
-                                        catch { };
-
-                                        if (canCommit)
-                                        {
-                                            Root.AtomicWriteCacheFile(profileUrnPath, profileSerialized);
-                                        }
-                                    }
-
-
-                                    return isObject;
-
+                                    profileState = isObject;
                                 }
-
-
                             }
 
                         }
@@ -386,6 +354,36 @@ namespace SUP.P2FK
                 }
 
             }
+
+            if (calculated && Root.WasLastFetchComplete(profileaddress) && profileState.URN != null)
+            {
+
+                bool canCommit = true;
+                try
+                {
+                    JSONOBJ = System.IO.File.ReadAllText(profileUrnPath);
+                    PROState existing = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
+                    if (existing != null)
+                    {
+                        if (existing.Id > profileState.Id) { canCommit = false; }
+                        else if (existing.Id == profileState.Id)
+                        {
+                            // At equal cursor, keep the richer creator map.
+                            int existingCreators = existing.Creators == null ? 0 : existing.Creators.Count;
+                            int newCreators = profileState.Creators == null ? 0 : profileState.Creators.Count;
+                            if (existingCreators > newCreators) { canCommit = false; }
+                        }
+                    }
+                }
+                catch { };
+
+                if (canCommit)
+                {
+                    var profileSerialized = JsonConvert.SerializeObject(profileState);
+                    Root.AtomicWriteCacheFile(profileUrnPath, profileSerialized);
+                }
+            }
+
 
                 return profileState;
             }
