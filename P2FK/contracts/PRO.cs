@@ -285,7 +285,7 @@ namespace SUP.P2FK
                     if (!Root.IsCLI) { _profileCache[profileaddress] = profileState; }
                 }
 
-                return profileState;
+                                return profileState;
             }
 
         }
@@ -319,7 +319,6 @@ namespace SUP.P2FK
                 if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
 
 
-            HashSet<string> addedValues = new HashSet<string>();
             bool calculated = false;
 
             foreach (Root transaction in profileTransactions)
@@ -328,35 +327,124 @@ namespace SUP.P2FK
                 {
                     calculated = true;
                     intProcessHeight = transaction.Id;
+
                     //ignore any transaction that is not signed
-                    if (transaction.Signed && transaction.File.ContainsKey("PRO") && ((profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy)) || profileState.Creators == null))
+                    if (transaction.Signed && transaction.File.ContainsKey("PRO"))
                     {
-                        string findObject = transaction.Keyword.ElementAt(transaction.Keyword.Count - 1).Key;
+                        string sigSeen = null;
 
-                        if (!System.IO.File.Exists(@"root\" + findObject + @"\BLOCK"))
+                        using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
                         {
+                            byte[] hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(transaction.Signature));
+                            string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
 
+                            string filePath = @"root\" + profileaddress + @"\sig\" + hashedSignature;
 
-                            PROState isObject = GetProfileByAddress(findObject, username, password, url, versionByte);
-
-                            if (isObject.URN != null && isObject.URN == searchstring && isObject.ChangeDate > DateTime.Now.AddYears(-10))
+                            if (!System.IO.File.Exists(filePath))
                             {
-                                if (isObject.Creators.Contains(findObject))
+                                if (!System.IO.Directory.Exists(@"root\" + profileaddress + @"\sig")) { System.IO.Directory.CreateDirectory(@"root\" + profileaddress + @"\sig"); }
+                                System.IO.File.WriteAllText(filePath, transaction.TransactionId);
+                            }
+                            else
+                            {
+                                sigSeen = System.IO.File.ReadAllText(filePath);
+                            }
+                        }
+
+                        if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
+                        {
+                            PRO profileinspector = null;
+                            try
+                            {
+                                profileinspector = JsonConvert.DeserializeObject<PRO>(System.IO.File.ReadAllText(@"root\" + transaction.TransactionId + @"\PRO"));
+                            }
+                            catch{}
+
+                            // First claim (no creator assigned yet)
+                            if (profileinspector != null && profileState.Creators == null)
+                            {
+                                profileState.Creators = new List<string> { };
+
+                                if (profileinspector.cre != null)
                                 {
-                                    isObject.Id = profileTransactions.Max(max => max.Id);
-                                    isObject.ProcessHeight = intProcessHeight;
-                                    profileState = isObject;
+                                    foreach (string keywordId in profileinspector.cre)
+                                    {
+                                        if (int.TryParse(keywordId, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.GetCultureInfo("en-US"), out int intkey))
+                                        {
+                                            string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
+
+                                            if (!profileState.Creators.Contains(creator))
+                                            {
+                                                profileState.Creators.Add(creator);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!profileState.Creators.Contains(keywordId))
+                                            {
+                                                profileState.Creators.Add(keywordId);
+                                            }
+                                        }
+                                    }
                                 }
+                                else { profileState.Creators.Add(transaction.SignedBy); }
+
+                                profileState.CreatedDate = transaction.BlockDate;
+                                profileState.ChangeDate = transaction.BlockDate;
+                                profileinspector.cre = null;
                             }
 
+                            // Has proper authority to make OBJ changes
+                            if (profileinspector != null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
+                            {
+                                if (profileinspector.cre != null && profileinspector.cre.Contains(transaction.SignedBy))
+                                {
+                                    profileState.Creators.Clear();
+
+                                    foreach (string keywordId in profileinspector.cre)
+                                    {
+                                        if (int.TryParse(keywordId, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.GetCultureInfo("en-US"), out int intkey))
+                                        {
+                                            string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
+
+                                            if (!profileState.Creators.Contains(creator))
+                                            {
+                                                profileState.Creators.Add(creator);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!profileState.Creators.Contains(keywordId))
+                                            {
+                                                profileState.Creators.Add(keywordId);
+                                            }
+                                        }
+                                    }
+                                    profileState.ChangeDate = transaction.BlockDate;
+                                }
+
+                                if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
+                                if (profileinspector.dnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.DisplayName = profileinspector.dnm; }
+                                if (profileinspector.fnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.FirstName = profileinspector.fnm; }
+                                if (profileinspector.mnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.MiddleName = profileinspector.mnm; }
+                                if (profileinspector.lnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.LastName = profileinspector.lnm; }
+                                if (profileinspector.sfx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Suffix = profileinspector.sfx; }
+                                if (profileinspector.bio != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Bio = profileinspector.bio; }
+                                if (profileinspector.img != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Image = profileinspector.img; }
+                                if (profileinspector.url != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URL = profileinspector.url; }
+                                if (profileinspector.loc != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Location = profileinspector.loc; }
+                                if (profileinspector.pkx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKX = profileinspector.pkx; }
+                                if (profileinspector.pky != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKY = profileinspector.pky; }
+                            }
                         }
                     }
                 }
-
             }
 
             if (calculated && Root.WasLastFetchComplete(profileaddress) && profileState.URN != null)
             {
+                profileState.Id = profileTransactions.Max(max => max.Id);
+                profileState.ProcessHeight = intProcessHeight;
 
                 bool canCommit = true;
                 try
@@ -383,7 +471,6 @@ namespace SUP.P2FK
                     Root.AtomicWriteCacheFile(profileUrnPath, profileSerialized);
                 }
             }
-
 
                 return profileState;
             }
