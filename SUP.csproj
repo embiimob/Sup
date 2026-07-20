@@ -377,8 +377,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp">
-      <Version>1.4.0</Version>
+      <Version>1.5.2</Version>
     </PackageReference>
+    <PackageReference Include="AngleSharp" Version="1.5.0" />
     <PackageReference Include="AngleSharp.Css">
       <Version>0.17.0</Version>
     </PackageReference>
