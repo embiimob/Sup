@@ -79,6 +79,8 @@ namespace SUP
         
         // IPFS process management
         private const int MAX_CONCURRENT_IPFS_PROCESSES = 22;
+        private const int MAX_GENERAL_FLOW_CONTROLS = 200;
+        private const int MAX_MONITOR_ARTIFACT_CONTROLS = 20;
         private static readonly object _ipfsProcessLock = new object();
         private static int _currentIPFSProcessCount = 0;
         
@@ -3711,7 +3713,7 @@ namespace SUP
                             this.Invoke((MethodInvoker)delegate
                             {
                                 AddToSearchResults(foundobjects);
-                                RemoveOverFlowMessages(supFlow);
+                                RemoveOverFlowMessages(supFlow, MAX_MONITOR_ARTIFACT_CONTROLS, false);
                             });
 
                         }
@@ -3845,42 +3847,39 @@ namespace SUP
 
         /// <summary>
         /// Removes overflow messages from the flow panel to maintain bounded memory usage.
-        /// Keeps approximately 200 controls visible at a time (roughly 40-50 messages with their UI elements).
+        /// Keeps a bounded number of controls visible and disposes overflow controls to reclaim memory.
         /// This provides smooth scrolling while preventing unbounded memory growth.
-        /// Removes controls from the END (bottom) of the list, so the most recent messages at top stay visible.
+        /// The trim direction can be controlled to preserve either newest or oldest content.
         /// 
         /// NOTE: Does NOT stop IPFS processes - CleanupExcessIPFSProcesses() handles that separately.
         /// This allows IPFS downloads to complete even if messages scroll out of view.
         /// </summary>
-        private void RemoveOverFlowMessages(FlowLayoutPanel flowLayoutPanel)
+        private void RemoveOverFlowMessages(
+            FlowLayoutPanel flowLayoutPanel,
+            int maxControls = MAX_GENERAL_FLOW_CONTROLS,
+            bool removeFromTop = true)
         {
-            // Target: Keep only ~200 controls max (roughly 40-50 messages)
-            // We need to be aggressive - remove ALL excess controls, not just a fixed count at a time
-            const int MAX_CONTROLS = 200;
-            
             int controlCount = 0;
             this.Invoke((MethodInvoker)delegate
             {
                 controlCount = flowLayoutPanel.Controls.Count;
             });
             
-            Debug.WriteLine($"[RemoveOverFlowMessages] Current control count: {controlCount}, MAX_CONTROLS: {MAX_CONTROLS}");
+            Debug.WriteLine($"[RemoveOverFlowMessages] Current control count: {controlCount}, MAX_CONTROLS: {maxControls}");
             
             // Only prune if we exceed the maximum controls
-            if (controlCount <= MAX_CONTROLS)
+            if (controlCount <= maxControls)
             {
-                Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) within limit ({MAX_CONTROLS}), no pruning needed");
+                Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) within limit ({maxControls}), no pruning needed");
                 return;
             }
             
             // Calculate how many to remove - ALL excess controls, not just a fixed amount
-            int excessCount = controlCount - MAX_CONTROLS;
-            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({MAX_CONTROLS}), removing ALL {excessCount} excess controls");
+            int excessCount = controlCount - maxControls;
+            Debug.WriteLine($"[RemoveOverFlowMessages] Control count ({controlCount}) exceeds limit ({maxControls}), removing ALL {excessCount} excess controls");
             MemoryDiagnostics.LogMemoryUsage("Before removing overflow controls");
             
-            // Remove the controls based on scroll direction
-            // When loading OLDER messages (scrolling down): Remove from BEGINNING (top) - newest messages
-            // When loading NEWER messages (scrolling up): This shouldn't be called (cleared and reloaded instead)
+            // Remove from either the top or bottom depending on caller behavior.
             this.Invoke((MethodInvoker)delegate
             {
                 try
@@ -3890,13 +3889,18 @@ namespace SUP
                     
                     List<Control> controlsToRemove = new List<Control>();
                     
-                    // When scrolling down (loading older), new messages added at bottom, remove from top
                     // Remove ALL excess controls, not just a fixed count
                     int removeCount = Math.Min(excessCount, flowLayoutPanel.Controls.Count);
                     
                     for (int i = 0; i < removeCount; i++)
                     {
-                        controlsToRemove.Add(flowLayoutPanel.Controls[i]);
+                        int indexToRemove = removeFromTop
+                            ? i
+                            : flowLayoutPanel.Controls.Count - 1 - i;
+                        if (indexToRemove >= 0)
+                        {
+                            controlsToRemove.Add(flowLayoutPanel.Controls[indexToRemove]);
+                        }
                     }
                     
                     // Remove them all at once without triggering layout for each
@@ -3908,7 +3912,8 @@ namespace SUP
                     // Resume layout once to apply all changes together
                     flowLayoutPanel.ResumeLayout(true);
                     
-                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {removeCount} controls from top, {flowLayoutPanel.Controls.Count} remaining");
+                    string removedDirection = removeFromTop ? "top" : "bottom";
+                    Debug.WriteLine($"[RemoveOverFlowMessages] Removed {removeCount} controls from {removedDirection}, {flowLayoutPanel.Controls.Count} remaining");
                     
                     // Dispose controls after removal to free memory
                     // MUST be done on UI thread since these are WinForms controls
@@ -3920,22 +3925,7 @@ namespace SUP
                             // Only that method should kill IPFS processes based on the 22 limit
                             // Killing IPFS for every removed message causes downloads to never complete
                             
-                            // Recursively dispose child controls first
-                            if (control.HasChildren)
-                            {
-                                List<Control> children = control.Controls.Cast<Control>().ToList();
-                                foreach (Control child in children)
-                                {
-                                    try 
-                                    { 
-                                        child.Dispose(); 
-                                    } 
-                                    catch (Exception childEx) 
-                                    {
-                                        Debug.WriteLine($"[RemoveOverFlowMessages] Child disposal error: {childEx.Message}");
-                                    }
-                                }
-                            }
+                            ReleaseControlResources(control);
                             control.Dispose(); 
                         } 
                         catch (Exception disposeEx) 
@@ -3945,6 +3935,8 @@ namespace SUP
                     }
                     
                     Debug.WriteLine("[RemoveOverFlowMessages] Completed control disposal");
+                    flowLayoutPanel.PerformLayout();
+                    flowLayoutPanel.Invalidate(true);
                     MemoryDiagnostics.LogMemoryUsage("After removing overflow controls");
                     
                     // Force garbage collection on background thread to avoid UI freeze
@@ -3973,6 +3965,56 @@ namespace SUP
                     try { flowLayoutPanel.ResumeLayout(true); } catch { }
                 }
             });
+        }
+
+        private void ReleaseControlResources(Control control)
+        {
+            if (control == null)
+            {
+                return;
+            }
+
+            if (control.HasChildren)
+            {
+                foreach (Control child in control.Controls.Cast<Control>().ToList())
+                {
+                    try
+                    {
+                        ReleaseControlResources(child);
+                    }
+                    catch (Exception childEx)
+                    {
+                        Debug.WriteLine($"[RemoveOverFlowMessages] Child cleanup error: {childEx.Message}");
+                    }
+                }
+            }
+
+            if (control is PictureBox pictureBox)
+            {
+                try
+                {
+                    var image = pictureBox.Image;
+                    pictureBox.Image = null;
+                    pictureBox.ImageLocation = null;
+                    image?.Dispose();
+                }
+                catch (Exception imageEx)
+                {
+                    Debug.WriteLine($"[RemoveOverFlowMessages] PictureBox cleanup error: {imageEx.Message}");
+                }
+            }
+            else if (control is Microsoft.Web.WebView2.WinForms.WebView2 webView2)
+            {
+                try
+                {
+                    webView2.Source = null;
+                    webView2.Stop();
+                }
+                catch (Exception webViewEx)
+                {
+                    Debug.WriteLine($"[RemoveOverFlowMessages] WebView cleanup error: {webViewEx.Message}");
+                }
+            }
         }
 
         /// <summary>
