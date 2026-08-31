@@ -58,7 +58,6 @@ namespace SUP.P2FK
 
 
         private readonly static object SupLocker = new object();
-        private static readonly ConcurrentDictionary<string, INQState> _inqCache = new ConcurrentDictionary<string, INQState>();
         public static INQState GetInquiryByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool calculate = false)
         {
             string sentinelDir = @"root\" + objectaddress;
@@ -85,29 +84,14 @@ namespace SUP.P2FK
                     string diskpath = "root\\" + objectaddress + "\\";
 
 
-                    // Check in-memory cache first (skip disk read on warm addresses)
-                    // In CLI mode the process exits immediately so the in-memory cache has no benefit.
-                    if (!calculate && !Root.IsCLI && _inqCache.TryGetValue(objectaddress, out INQState memInq))
+                    // fetch current JSONOBJ from disk if it exists
+                    try
                     {
-                        objectState = memInq;
+                        JSONOBJ = System.IO.File.ReadAllText(diskpath + "INQ.json");
+                        objectState = JsonConvert.DeserializeObject<INQState>(JSONOBJ);
                         fetched = true;
                     }
-                    else
-                    {
-                        // fetch current JSONOBJ from disk if it exists
-                        try
-                        {
-                            JSONOBJ = System.IO.File.ReadAllText(diskpath + "INQ.json");
-                            objectState = JsonConvert.DeserializeObject<INQState>(JSONOBJ);
-                            fetched = true;
-                            // Warm the memory cache from the disk read (GUI mode only)
-                            if (!Root.IsCLI && objectState != null)
-                            {
-                                _inqCache[objectaddress] = objectState;
-                            }
-                        }
-                        catch { }
-                    }
+                    catch { }
 
                     if (fetched && objectState.URN == null && !calculate)
                     {
@@ -435,8 +419,6 @@ namespace SUP.P2FK
                         System.IO.File.WriteAllText(inqTmp, objectSerialized);
                         if (System.IO.File.Exists(inqTarget)) System.IO.File.Delete(inqTarget);
                         System.IO.File.Move(inqTmp, inqTarget);
-                        // Keep memory cache in sync with the freshly computed state (GUI mode only)
-                        if (!Root.IsCLI) { _inqCache[objectaddress] = objectState; }
                     }
 
                 }
