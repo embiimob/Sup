@@ -22,6 +22,7 @@ P2FK was directly inspired by the satoshi uploader  see --> https://cirosantilli
 5. Type embii4u in the main search box, hit enter and *WAIT while the profile loads for the first time<br />
 
 *Build time was 1 minute 44 seconds as of Sep 14 2025 at a profile height of 3074 with 190 object associations<br />
+**The embii4u handle has been transferred to a new address to reduce loading time to a few seconds. To view all 195 older test objects build the archived account by clicking on the home button labeled "embii4u archive 2023-2026" 
 <br />
 <br />
 **Sync Time Estimates & Disk Space Requirements (Sep 2025)**
