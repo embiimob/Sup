@@ -76,7 +76,7 @@ namespace SUP.P2FK
                 hex = "0" + hex;
             }
 
-            return Convert.FromHexString(hex);
+            return Hex.HexToBytes(hex);
         }
     }
 }
