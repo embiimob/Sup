@@ -5,6 +5,7 @@ using SUP.P2FK;
 using CommandLine.Text;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 
 namespace SUP
 {
@@ -15,8 +16,16 @@ namespace SUP
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        [STAThread]
         static void Main(string[] args)
         {
+            if (args == null || args.Length == 0)
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new ADD.Main());
+                return;
+            }
 
             var parserResult = Parser.Default.ParseArguments<CommandOptions>(args);
             if (parserResult is Parsed<CommandOptions> parsedOptions)
