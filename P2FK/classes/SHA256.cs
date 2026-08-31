@@ -6,11 +6,6 @@ namespace SUP.P2FK
 {
     public class SHA256
     {
-        private static readonly Dictionary<string, byte> _hexToByte = new Dictionary<
-            string,
-            byte
-        >();
-
         public static byte[] Hash(byte[] data)
         {
             if (data == null)
@@ -71,20 +66,17 @@ namespace SUP.P2FK
 
         public static byte[] HexToBytes(string hex)
         {
+            if (hex == null)
+            {
+                throw new ArgumentNullException(nameof(hex), "Input hex cannot be null");
+            }
+
             if (hex.Length % 2 != 0)
             {
                 hex = "0" + hex;
             }
 
-            hex = hex.ToLower();
-
-            var bytes = new byte[hex.Length / 2];
-            for (int i = 0; i < hex.Length / 2; i++)
-            {
-                bytes[i] = _hexToByte[hex.Substring(i * 2, 2)];
-            }
-
-            return bytes;
+            return Convert.FromHexString(hex);
         }
     }
 }

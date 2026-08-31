@@ -94,7 +94,6 @@ namespace SUP.P2FK
 
 
         private readonly static object SupLocker = new object();
-        private static readonly ConcurrentDictionary<string, OBJState> _objCache = new ConcurrentDictionary<string, OBJState>();
         public static OBJState GetObjectByAddress(string objectaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
 
@@ -104,6 +103,7 @@ namespace SUP.P2FK
             try
             {
                 bool fetched = false;
+                List<string> cachedChangeLog = null;
 
                 if (System.IO.File.Exists(@"root\" + objectaddress + @"\BLOCK"))
                 {
@@ -116,33 +116,50 @@ namespace SUP.P2FK
                 string diskpath = "root\\" + objectaddress + "\\";
 
 
-                // Check in-memory cache first (skip disk read on warm addresses)
-                // In CLI mode the process exits immediately so the in-memory cache has no benefit.
-                if (!verbose && !Root.IsCLI && _objCache.TryGetValue(objectaddress, out OBJState memObj))
+                // fetch current JSONOBJ from disk if it exists
+                try
                 {
-                    objectState = memObj;
-                    fetched = true;
-                }
-                else
-                {
-                    // fetch current JSONOBJ from disk if it exists
-                    try
+                    JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
+                    OBJState diskObj = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+                    if (diskObj != null)
                     {
-                        JSONOBJ = System.IO.File.ReadAllText(diskpath + "OBJ.json");
-                        objectState = JsonConvert.DeserializeObject<OBJState>(JSONOBJ);
+                        objectState = diskObj;
                         fetched = true;
-                        // Warm the memory cache from the disk read (GUI mode only)
-                        if (!Root.IsCLI && objectState != null && objectState.URN != null)
-                        {
-                            _objCache[objectaddress] = objectState;
-                        }
                     }
-                    catch { }
                 }
-                if (fetched && objectState.URN == null && objectState.ProcessHeight == 0)
+                catch { }
+                if (fetched && !verbose && objectState != null && objectState.URN != null)
                 {
+                    if (objectState.ChangeLog == null)
+                    {
+                        objectState.ChangeLog = new List<string>();
+                    }
+                    return objectState;
+                }
+
+                if (!verbose && fetched && objectState != null && objectState.URN == null && objectState.ProcessHeight > 0)
+                {
+                    if (objectState.ChangeLog == null)
+                    {
+                        objectState.ChangeLog = new List<string>();
+                    }
 
                     return objectState;
+                }
+
+                if (objectState == null)
+                {
+                    objectState = new OBJState();
+                }
+
+                if (objectState.ChangeLog == null)
+                {
+                    objectState.ChangeLog = new List<string>();
+                }
+
+                if (objectState.ChangeLog.Count > 0)
+                {
+                    cachedChangeLog = new List<string>(objectState.ChangeLog);
                 }
 
 
@@ -185,6 +202,10 @@ namespace SUP.P2FK
 
                     if (intProcessHeight != 0 && objectTransactions.Count() == 0)
                     {
+                        if (!verbose && objectState.ChangeLog.Count == 0 && cachedChangeLog != null && cachedChangeLog.Count > 0)
+                        {
+                            objectState.ChangeLog = new List<string>(cachedChangeLog);
+                        }
                         return objectState;
                     }
                     string[] requiredKeys = { "OBJ", "GIV", "BRN", "BUY", "LST" };
@@ -226,7 +247,7 @@ namespace SUP.P2FK
                                 }
 
 
-                                if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
+                                if (sigSeen == null || sigSeen == transaction.TransactionId)
                                 {
 
                                     switch (transaction.File.ElementAtOrDefault(1).Key?.ToString())
@@ -1793,6 +1814,11 @@ namespace SUP.P2FK
 
                     //used to determine where to begin object State processing when retrieved from cache
 
+                    if (!verbose && (objectState.ChangeLog == null || objectState.ChangeLog.Count == 0) && cachedChangeLog != null && cachedChangeLog.Count > 0)
+                    {
+                        objectState.ChangeLog = new List<string>(cachedChangeLog);
+                    }
+
                     objectState.Id = objectTransactions.Max(state => state.Id);
                     objectState.Verbose = verbose;
 
@@ -1805,26 +1831,64 @@ namespace SUP.P2FK
                         using (Root.AcquireAddressCacheLock(objectaddress, "OBJ"))
                         {
                             bool canCommit = true;
+                            OBJState stateToPersist = objectState;
                             try
                             {
                                 OBJState existing = JsonConvert.DeserializeObject<OBJState>(System.IO.File.ReadAllText(objTarget));
                                 if (existing != null)
                                 {
-                                    if (existing.Id > objectState.Id) { canCommit = false; }
+                                    List<string> existingChangeLog = existing.ChangeLog ?? new List<string>();
+                                    List<string> incomingChangeLog = objectState.ChangeLog ?? new List<string>();
+                                    HashSet<string> existingChangeLogSet = new HashSet<string>(existingChangeLog);
+                                    List<string> mergedChangeLog = new List<string>(existingChangeLog);
+                                    bool hasNewChangeLogEntries = false;
+                                    foreach (string logEntry in incomingChangeLog)
+                                    {
+                                        if (existingChangeLogSet.Add(logEntry))
+                                        {
+                                            mergedChangeLog.Add(logEntry);
+                                            hasNewChangeLogEntries = true;
+                                        }
+                                    }
+
+                                    if (existing.Id > objectState.Id)
+                                    {
+                                        if (hasNewChangeLogEntries)
+                                        {
+                                            existing.ChangeLog = mergedChangeLog;
+                                            stateToPersist = existing;
+                                        }
+                                        else { canCommit = false; }
+                                    }
                                     // At equal cursor, keep the fresher object snapshot.
-                                    else if (existing.Id == objectState.Id && existing.ChangeDate > objectState.ChangeDate) { canCommit = false; }
+                                    else if (existing.Id == objectState.Id)
+                                    {
+                                        if (existing.ChangeDate > objectState.ChangeDate)
+                                        {
+                                            if (hasNewChangeLogEntries)
+                                            {
+                                                existing.ChangeLog = mergedChangeLog;
+                                                stateToPersist = existing;
+                                            }
+                                            else { canCommit = false; }
+                                        }
+                                        else
+                                        {
+                                            objectState.ChangeLog = mergedChangeLog;
+                                            stateToPersist = objectState;
+                                        }
+                                    }
                                 }
                             }
                             catch { }
 
                             if (canCommit)
                             {
-                                var objectSerialized = JsonConvert.SerializeObject(objectState);
+                                var objectSerialized = JsonConvert.SerializeObject(stateToPersist);
                                 Root.AtomicWriteCacheFile(objTarget, objectSerialized);
+                                objectState = stateToPersist;
                             }
                         }
-                        // Keep memory cache in sync with the freshly computed state (GUI mode only)
-                        if (!Root.IsCLI) { _objCache[objectaddress] = objectState; }
                     }
                 }
 

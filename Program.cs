@@ -1,9 +1,7 @@
-﻿using System;
-using System.Windows.Forms;
+using System;
 using CommandLine;
 using Newtonsoft.Json;
 using SUP.P2FK;
-using System.Runtime.InteropServices;
 using CommandLine.Text;
 using System.Collections.Generic;
 using System.Text;
@@ -11,42 +9,18 @@ using System.Text;
 namespace SUP
 {
 
-    class Magician
-    {
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GetConsoleWindow();
-
-        [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        const int HIDE = 0;
-        const int SHOW = 5;
-
-        public static void DisappearConsole()
-        {
-            ShowWindow(GetConsoleWindow(), HIDE);
-        }
-    }
-
-
     internal static class Program
     {
 
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
         static void Main(string[] args)
         {
 
             var parserResult = Parser.Default.ParseArguments<CommandOptions>(args);
             if (parserResult is Parsed<CommandOptions> parsedOptions)
             {
-                // Signal all contract classes to skip in-memory caches.  The CLI
-                // process exits as soon as a result is returned, so building the
-                // in-memory cache only wastes time.  Disk caches are still used.
-                Root.IsCLI = true;
-
                 var options = parsedOptions.Value;
                 IDisposable cliAddressLock = null;
                 try
@@ -288,10 +262,7 @@ namespace SUP
                     }
                     else
                     {
-                        Magician.DisappearConsole();
-                        Application.EnableVisualStyles();
-                        Application.SetCompatibleTextRenderingDefault(false);
-                        Application.Run(new SupMain());
+                        Console.Error.WriteLine("No command option supplied. Run with --help to see available commands.");
                     }
                 }
                 finally
@@ -440,7 +411,7 @@ namespace SUP
                 yield return new Example("get profile by urn", new CommandOptions { GetProfileByURN = true, URN = "embii4u", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111"});
                 yield return new Example("get inquiry by address", new CommandOptions { GetInquiryByAddress = true, Address = "mqjT2e9zzYia9ndiwcT3Xwi4FvED4gw3Da", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Verbose = true });
                 yield return new Example("get inquiry by transaction id", new CommandOptions { GetInquiryByTransactionId = true, TransactionId = "1ee795c31455c7674d6c0bed72f8f7b46501df2c86881440b96c9e5bf07de14b", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Verbose = true });
-                yield return new Example("get inquires by address", new CommandOptions { GetInquiriesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1, Verbose = true });
+                yield return new Example("get inquiries by address", new CommandOptions { GetInquiriesByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1, Verbose = true });
                 yield return new Example("get inquiries created by address", new CommandOptions { GetInquiriesCreatedByAddress = true, Address = "muVrFVk3ErfrnmWosLF4WixxRtDKfMx9bs", Username = "good-user", Password = "better-password", Url = "http://127.0.0.1:18332", VersionByte = "111", Skip = 0, Qty = -1, Verbose = true });
 
             }

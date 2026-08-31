@@ -67,18 +67,9 @@ namespace SUP.P2FK
         public DateTime BuildDate { get; set; }
         public bool Cached { get; set; }
 
-        private static readonly ConcurrentDictionary<string, List<Root>> _rootsCache = new ConcurrentDictionary<string, List<Root>>();
         // Stores true when the last GetRootsByAddress for an address completed fully
         // (no network/RPC error), false when it failed mid-fetch.
         private static readonly ConcurrentDictionary<string, bool> _lastFetchCompleted = new ConcurrentDictionary<string, bool>();
-
-        /// <summary>
-        /// Set to true by Program.cs when the process is running as a CLI command.
-        /// In CLI mode the process exits immediately after returning, so populating
-        /// in-memory caches only wastes CPU and allocation time.  Disk caches are
-        /// still read and written as normal.
-        /// </summary>
-        public static bool IsCLI { get; set; } = false;
 
         /// <summary>
         /// Returns true if the most recent GetRootsByAddress call for this address completed
@@ -146,7 +137,7 @@ namespace SUP.P2FK
         public static Root GetRootByTransactionId(string transactionid, string username, string password, string url, string versionbyte = "111", byte[] rootbytes = null, string signatureaddress = null, bool calculate = false)
         {
             Root P2FKRoot = new Root();
-            string diskpath = "root\\" + transactionid + "\\";
+            string diskpath = Path.Combine("root", transactionid);
             string P2FKJSONString = null;
             bool isMuted = false;
             try
@@ -156,7 +147,7 @@ namespace SUP.P2FK
                     try
                     {
 
-                        P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOT.json");
+                        P2FKJSONString = System.IO.File.ReadAllText(Path.Combine(diskpath, "ROOT.json"));
                         P2FKRoot = JsonConvert.DeserializeObject<Root>(P2FKJSONString);
 
                         if (P2FKRoot.Confirmations > 0)
@@ -350,7 +341,7 @@ namespace SUP.P2FK
                         try
                         {
                             // This will throw an exception if the file name is not valid
-                            System.IO.File.Create(diskpath + fileName).Dispose();
+                            System.IO.File.Create(Path.Combine(diskpath, fileName)).Dispose();
                             sigEndByte += packetSize + headerSize;
                         }
                         catch (Exception)
@@ -451,7 +442,7 @@ namespace SUP.P2FK
                             }
                         }
 
-                        using (FileStream fs = new FileStream(diskpath + fileName, FileMode.Create))
+                        using (FileStream fs = new FileStream(Path.Combine(diskpath, fileName), FileMode.Create))
                         {
                             fs.Write(fileBytes, 0, fileBytes.Length);
                         }
@@ -464,7 +455,7 @@ namespace SUP.P2FK
                         {
                             sigEndByte += packetSize + headerSize;
                             MessageList.Add(Encoding.UTF8.GetString(fileBytes));
-                            using (FileStream fs = new FileStream(diskpath + "MSG", FileMode.Create))
+                            using (FileStream fs = new FileStream(Path.Combine(diskpath, "MSG"), FileMode.Create))
                             {
                                 fs.Write(fileBytes, 0, fileBytes.Length);
 
@@ -606,8 +597,8 @@ namespace SUP.P2FK
 
             address = address.Replace("<", "").Replace(">", "");
 
-            string sentinelDir = @"root\" + address;
-            string sentinelFile = sentinelDir + @"\ROOTS-PROCESSING";
+            string sentinelDir = Path.Combine("root", address);
+            string sentinelFile = Path.Combine(sentinelDir, "ROOTS-PROCESSING");
             try { Directory.CreateDirectory(sentinelDir); } catch { }
             try { using (System.IO.File.Create(sentinelFile)) { } } catch { }
 
@@ -617,30 +608,14 @@ namespace SUP.P2FK
                 {
                 bool fetched = false;
 
-                // Check in-memory cache first (skip disk read on warm addresses)
-                // In CLI mode the process exits immediately so there is no benefit to
-                // reading or writing the in-memory cache.
-                if (!calculate && !IsCLI && _rootsCache.TryGetValue(address, out List<Root> memCached))
+                try
                 {
-                    rootList = new List<Root>(memCached);
+                    string diskpath = Path.Combine("root", address);
+                    string P2FKJSONString = System.IO.File.ReadAllText(Path.Combine(diskpath, "ROOTS.json"));
+                    rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
                     fetched = true;
                 }
-                else
-                {
-                    try
-                    {
-                        string diskpath = "root\\" + address + "\\";
-                        string P2FKJSONString = System.IO.File.ReadAllText(diskpath + "ROOTS.json");
-                        rootList = JsonConvert.DeserializeObject<List<Root>>(P2FKJSONString);
-                        fetched = true;
-                        // Warm the memory cache from the disk read (GUI mode only)
-                        if (!IsCLI && rootList != null && rootList.Count > 0)
-                        {
-                            _rootsCache[address] = new List<Root>(rootList);
-                        }
-                    }
-                    catch { }
-                }
+                catch { }
 
 
                 int intProcessHeight = 0;
@@ -727,8 +702,6 @@ namespace SUP.P2FK
                     {
                         var rootSerialized = JsonConvert.SerializeObject(rootList);
                         AtomicWriteCacheFile(rootsTarget, rootSerialized);
-                        // Keep memory cache in sync with the freshly written data (GUI mode only)
-                        if (!IsCLI) { _rootsCache[address] = new List<Root>(rootList); }
                     }
 
                 }

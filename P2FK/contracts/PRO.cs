@@ -50,7 +50,6 @@ namespace SUP.P2FK
         public DateTime CreatedDate { get; set; }
         public DateTime ChangeDate { get; set; }
         private static char[] specialChars = new char[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
-        private static readonly ConcurrentDictionary<string, PROState> _profileCache = new ConcurrentDictionary<string, PROState>();
 
         public static PROState GetProfileByAddress(string profileaddress, string username, string password, string url, string versionByte = "111", bool verbose = false)
         {
@@ -66,27 +65,13 @@ namespace SUP.P2FK
 
             using (Root.AcquireAddressCacheLock(profileaddress, "GetProfileByAddress"))
             {
-                // Check in-memory cache first (skip disk read on warm addresses)
-                // In CLI mode the process exits immediately so the in-memory cache has no benefit.
-                if (!verbose && !Root.IsCLI && _profileCache.TryGetValue(profileaddress, out PROState memProfile))
+                // fetch current JSONOBJ from disk if it exists
+                try
                 {
-                    profileState = memProfile;
+                    JSONOBJ = System.IO.File.ReadAllText(profilePath);
+                    profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
                 }
-                else
-                {
-                    // fetch current JSONOBJ from disk if it exists
-                    try
-                    {
-                        JSONOBJ = System.IO.File.ReadAllText(profilePath);
-                        profileState = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
-                        // Warm the memory cache from the disk read (GUI mode only)
-                        if (!Root.IsCLI && profileState != null)
-                        {
-                            _profileCache[profileaddress] = profileState;
-                        }
-                    }
-                    catch { }
-                }
+                catch { }
 
                 int intProcessHeight = 0;
                 bool calculated = false;
@@ -192,34 +177,48 @@ namespace SUP.P2FK
                             //has proper authority to make OBJ changes
                             if (profileinspector != null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
                             {
-                                if (profileinspector.cre != null && profileinspector.cre.Contains(transaction.SignedBy))
+                                if (profileinspector.cre != null)
                                 {
-                                    profileState.Creators.Clear();
-
+                                    // Resolve keyword indices to actual addresses before checking containment
+                                    var reversedKeywords = transaction.Keyword.Reverse().ToList();
+                                    List<string> resolvedCre = new List<string>();
                                     foreach (string keywordId in profileinspector.cre)
                                     {
-                                        if (int.TryParse(keywordId, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intkey))
+                                        if (int.TryParse(keywordId, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out int intkey)
+                                            && intkey < reversedKeywords.Count)
                                         {
-                                            string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
+                                            resolvedCre.Add(reversedKeywords[intkey].Key);
+                                        }
+                                        else if (!int.TryParse(keywordId, NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out _))
+                                        {
+                                            resolvedCre.Add(keywordId);
+                                        }
+                                    }
 
+                                    if (resolvedCre.Contains(transaction.SignedBy))
+                                    {
+                                        profileState.Creators.Clear();
+
+                                        foreach (string creator in resolvedCre)
+                                        {
                                             if (!profileState.Creators.Contains(creator))
                                             {
                                                 profileState.Creators.Add(creator);
                                             }
                                         }
-                                        else
+
+                                        profileState.ChangeDate = transaction.BlockDate;
+
+                                        // If the transfer has resolved to a single address that is not
+                                        // this profile address, the URN has moved away.  Reset the state
+                                        // immediately so further transactions in this loop are processed
+                                        // against a clean (unclaimed) profile rather than the old one.
+                                        if (profileState.Creators.Count == 1 && profileState.Creators[0] != profileaddress)
                                         {
-                                            if (!profileState.Creators.Contains(keywordId))
-                                            {
-                                                profileState.Creators.Add(keywordId);
-                                            }
+                                            profileState = new PROState { ProcessHeight = intProcessHeight };
+                                            goto nextTransaction;
                                         }
-
                                     }
-
-
-                                    profileState.ChangeDate = transaction.BlockDate;
-
                                 }
                                 if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
                                 if (profileinspector.dnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.DisplayName = profileinspector.dnm; }
@@ -244,8 +243,10 @@ namespace SUP.P2FK
 
 
 
+
                         }
                     }
+                    nextTransaction:;
                 }
 
                 if (calculated && Root.WasLastFetchComplete(profileaddress))
@@ -253,6 +254,20 @@ namespace SUP.P2FK
                     if (objectTransactions.Count() > 0)
                     {
                         profileState.Id = objectTransactions.Max(max => max.Id);
+                    }
+
+                    // If the final creator list contains exactly one address that is not
+                    // profileaddress, the URN transfer has completed and the profile no
+                    // longer belongs to this address.  Return and cache a nullified state
+                    // so the address is free to claim a new URN.
+                    if (profileState.Creators != null
+                        && profileState.Creators.Count == 1
+                        && profileState.Creators[0] != profileaddress)
+                    {
+                        PROState nullified = new PROState { Id = profileState.Id, ProcessHeight = profileState.ProcessHeight };
+                        var nullifiedSerialized = JsonConvert.SerializeObject(nullified);
+                        Root.AtomicWriteCacheFile(profilePath, nullifiedSerialized);
+                        return nullified;
                     }
 
                     bool canCommit = true;
@@ -280,12 +295,9 @@ namespace SUP.P2FK
                         var profileSerialized = JsonConvert.SerializeObject(profileState);
                         Root.AtomicWriteCacheFile(profilePath, profileSerialized);
                     }
-
-                    // Keep memory cache in sync with the freshly computed state (GUI mode only)
-                    if (!Root.IsCLI) { _profileCache[profileaddress] = profileState; }
                 }
 
-                                return profileState;
+                return profileState;
             }
 
         }
@@ -319,158 +331,165 @@ namespace SUP.P2FK
                 if (intProcessHeight > 0 && profileTransactions.Count() == 0) { return profileState; }
 
 
-            bool calculated = false;
+                bool calculated = false;
 
-            foreach (Root transaction in profileTransactions)
-            {
-                if (transaction.Id > intProcessHeight)
+                foreach (Root transaction in profileTransactions)
                 {
-                    calculated = true;
-                    intProcessHeight = transaction.Id;
-
-                    //ignore any transaction that is not signed
-                    if (transaction.Signed && transaction.File.ContainsKey("PRO"))
+                    if (transaction.Id > intProcessHeight)
                     {
-                        string sigSeen = null;
+                        calculated = true;
+                        intProcessHeight = transaction.Id;
 
-                        using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
+                        //ignore any transaction that is not signed
+                        if (transaction.Signed && transaction.File.ContainsKey("PRO"))
                         {
-                            byte[] hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(transaction.Signature));
-                            string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
+                            string sigSeen = null;
 
-                            string filePath = @"root\" + profileaddress + @"\sig\" + hashedSignature;
-
-                            if (!System.IO.File.Exists(filePath))
+                            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
                             {
-                                if (!System.IO.Directory.Exists(@"root\" + profileaddress + @"\sig")) { System.IO.Directory.CreateDirectory(@"root\" + profileaddress + @"\sig"); }
-                                System.IO.File.WriteAllText(filePath, transaction.TransactionId);
-                            }
-                            else
-                            {
-                                sigSeen = System.IO.File.ReadAllText(filePath);
-                            }
-                        }
+                                byte[] hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(transaction.Signature));
+                                string hashedSignature = BitConverter.ToString(hashBytes).Replace("-", "");
 
-                        if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
-                        {
-                            PRO profileinspector = null;
-                            try
-                            {
-                                profileinspector = JsonConvert.DeserializeObject<PRO>(System.IO.File.ReadAllText(@"root\" + transaction.TransactionId + @"\PRO"));
-                            }
-                            catch{}
+                                string filePath = @"root\" + profileaddress + @"\sig\" + hashedSignature;
 
-                            // First claim (no creator assigned yet)
-                            if (profileinspector != null && profileState.Creators == null)
-                            {
-                                profileState.Creators = new List<string> { };
-
-                                if (profileinspector.cre != null)
+                                if (!System.IO.File.Exists(filePath))
                                 {
-                                    foreach (string keywordId in profileinspector.cre)
-                                    {
-                                        if (int.TryParse(keywordId, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.GetCultureInfo("en-US"), out int intkey))
-                                        {
-                                            string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
-
-                                            if (!profileState.Creators.Contains(creator))
-                                            {
-                                                profileState.Creators.Add(creator);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (!profileState.Creators.Contains(keywordId))
-                                            {
-                                                profileState.Creators.Add(keywordId);
-                                            }
-                                        }
-                                    }
+                                    if (!System.IO.Directory.Exists(@"root\" + profileaddress + @"\sig")) { System.IO.Directory.CreateDirectory(@"root\" + profileaddress + @"\sig"); }
+                                    System.IO.File.WriteAllText(filePath, transaction.TransactionId);
                                 }
-                                else { profileState.Creators.Add(transaction.SignedBy); }
-
-                                profileState.CreatedDate = transaction.BlockDate;
-                                profileState.ChangeDate = transaction.BlockDate;
-                                profileinspector.cre = null;
+                                else
+                                {
+                                    sigSeen = System.IO.File.ReadAllText(filePath);
+                                }
                             }
 
-                            // Has proper authority to make OBJ changes
-                            if (profileinspector != null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
+                            if (sigSeen == null || (verbose && sigSeen == transaction.TransactionId))
                             {
-                                if (profileinspector.cre != null && profileinspector.cre.Contains(transaction.SignedBy))
+                                PRO profileinspector = null;
+                                try
                                 {
-                                    profileState.Creators.Clear();
+                                    profileinspector = JsonConvert.DeserializeObject<PRO>(System.IO.File.ReadAllText(@"root\" + transaction.TransactionId + @"\PRO"));
+                                }
+                                catch { }
 
-                                    foreach (string keywordId in profileinspector.cre)
+                                // First claim (no creator assigned yet)
+                                if (profileinspector != null && profileState.Creators == null)
+                                {
+                                    profileState.Creators = new List<string> { };
+
+                                    if (profileinspector.cre != null)
                                     {
-                                        if (int.TryParse(keywordId, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.GetCultureInfo("en-US"), out int intkey))
+                                        foreach (string keywordId in profileinspector.cre)
                                         {
-                                            string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
+                                            if (int.TryParse(keywordId, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.GetCultureInfo("en-US"), out int intkey))
+                                            {
+                                                string creator = transaction.Keyword.Reverse().ElementAt(intkey).Key;
 
-                                            if (!profileState.Creators.Contains(creator))
-                                            {
-                                                profileState.Creators.Add(creator);
+                                                if (!profileState.Creators.Contains(creator))
+                                                {
+                                                    profileState.Creators.Add(creator);
+                                                }
                                             }
-                                        }
-                                        else
-                                        {
-                                            if (!profileState.Creators.Contains(keywordId))
+                                            else
                                             {
-                                                profileState.Creators.Add(keywordId);
+                                                if (!profileState.Creators.Contains(keywordId))
+                                                {
+                                                    profileState.Creators.Add(keywordId);
+                                                }
                                             }
                                         }
                                     }
+                                    else { profileState.Creators.Add(transaction.SignedBy); }
+
+                                    profileState.CreatedDate = transaction.BlockDate;
                                     profileState.ChangeDate = transaction.BlockDate;
+                                    profileinspector.cre = null;
                                 }
 
-                                if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
-                                if (profileinspector.dnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.DisplayName = profileinspector.dnm; }
-                                if (profileinspector.fnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.FirstName = profileinspector.fnm; }
-                                if (profileinspector.mnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.MiddleName = profileinspector.mnm; }
-                                if (profileinspector.lnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.LastName = profileinspector.lnm; }
-                                if (profileinspector.sfx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Suffix = profileinspector.sfx; }
-                                if (profileinspector.bio != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Bio = profileinspector.bio; }
-                                if (profileinspector.img != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Image = profileinspector.img; }
-                                if (profileinspector.url != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URL = profileinspector.url; }
-                                if (profileinspector.loc != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Location = profileinspector.loc; }
-                                if (profileinspector.pkx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKX = profileinspector.pkx; }
-                                if (profileinspector.pky != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKY = profileinspector.pky; }
+                                // Has proper authority to make OBJ changes
+                                if (profileinspector != null && profileState.Creators != null && profileState.Creators.Contains(transaction.SignedBy))
+                                {
+                                    if (profileinspector.cre != null)
+                                    {
+                                        // Resolve keyword indices to actual addresses before checking containment
+                                        var reversedKeywords = transaction.Keyword.Reverse().ToList();
+                                        List<string> resolvedCre = new List<string>();
+                                        foreach (string keywordId in profileinspector.cre)
+                                        {
+                                            if (int.TryParse(keywordId, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.GetCultureInfo("en-US"), out int intkey)
+                                                && intkey < reversedKeywords.Count)
+                                            {
+                                                resolvedCre.Add(reversedKeywords[intkey].Key);
+                                            }
+                                            else if (!int.TryParse(keywordId, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.GetCultureInfo("en-US"), out _))
+                                            {
+                                                resolvedCre.Add(keywordId);
+                                            }
+                                        }
+
+                                        if (resolvedCre.Contains(transaction.SignedBy))
+                                        {
+                                            profileState.Creators.Clear();
+
+                                            foreach (string creator in resolvedCre)
+                                            {
+                                                if (!profileState.Creators.Contains(creator))
+                                                {
+                                                    profileState.Creators.Add(creator);
+                                                }
+                                            }
+                                            profileState.ChangeDate = transaction.BlockDate;
+                                        }
+                                    }
+
+                                    if (profileinspector.urn != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URN = profileinspector.urn; }
+                                    if (profileinspector.dnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.DisplayName = profileinspector.dnm; }
+                                    if (profileinspector.fnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.FirstName = profileinspector.fnm; }
+                                    if (profileinspector.mnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.MiddleName = profileinspector.mnm; }
+                                    if (profileinspector.lnm != null) { profileState.ChangeDate = transaction.BlockDate; profileState.LastName = profileinspector.lnm; }
+                                    if (profileinspector.sfx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Suffix = profileinspector.sfx; }
+                                    if (profileinspector.bio != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Bio = profileinspector.bio; }
+                                    if (profileinspector.img != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Image = profileinspector.img; }
+                                    if (profileinspector.url != null) { profileState.ChangeDate = transaction.BlockDate; profileState.URL = profileinspector.url; }
+                                    if (profileinspector.loc != null) { profileState.ChangeDate = transaction.BlockDate; profileState.Location = profileinspector.loc; }
+                                    if (profileinspector.pkx != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKX = profileinspector.pkx; }
+                                    if (profileinspector.pky != null) { profileState.ChangeDate = transaction.BlockDate; profileState.PKY = profileinspector.pky; }
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            if (calculated && Root.WasLastFetchComplete(profileaddress) && profileState.URN != null)
-            {
-                profileState.Id = profileTransactions.Max(max => max.Id);
-                profileState.ProcessHeight = intProcessHeight;
-
-                bool canCommit = true;
-                try
+                if (calculated && Root.WasLastFetchComplete(profileaddress) && profileState.URN != null)
                 {
-                    JSONOBJ = System.IO.File.ReadAllText(profileUrnPath);
-                    PROState existing = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
-                    if (existing != null)
+                    profileState.Id = profileTransactions.Max(max => max.Id);
+                    profileState.ProcessHeight = intProcessHeight;
+
+                    bool canCommit = true;
+                    try
                     {
-                        if (existing.Id > profileState.Id) { canCommit = false; }
-                        else if (existing.Id == profileState.Id)
+                        JSONOBJ = System.IO.File.ReadAllText(profileUrnPath);
+                        PROState existing = JsonConvert.DeserializeObject<PROState>(JSONOBJ);
+                        if (existing != null)
                         {
-                            // At equal cursor, keep the richer creator map.
-                            int existingCreators = existing.Creators == null ? 0 : existing.Creators.Count;
-                            int newCreators = profileState.Creators == null ? 0 : profileState.Creators.Count;
-                            if (existingCreators > newCreators) { canCommit = false; }
+                            if (existing.Id > profileState.Id) { canCommit = false; }
+                            else if (existing.Id == profileState.Id)
+                            {
+                                // At equal cursor, keep the richer creator map.
+                                int existingCreators = existing.Creators == null ? 0 : existing.Creators.Count;
+                                int newCreators = profileState.Creators == null ? 0 : profileState.Creators.Count;
+                                if (existingCreators > newCreators) { canCommit = false; }
+                            }
                         }
                     }
-                }
-                catch { };
+                    catch { };
 
-                if (canCommit)
-                {
-                    var profileSerialized = JsonConvert.SerializeObject(profileState);
-                    Root.AtomicWriteCacheFile(profileUrnPath, profileSerialized);
+                    if (canCommit)
+                    {
+                        var profileSerialized = JsonConvert.SerializeObject(profileState);
+                        Root.AtomicWriteCacheFile(profileUrnPath, profileSerialized);
+                    }
                 }
-            }
 
                 return profileState;
             }
@@ -551,8 +570,8 @@ namespace SUP.P2FK
                 }
                 catch { };
             }
-            var sortedprofileStatese = profileStates.OrderBy(urn => urn.URN);
-            return sortedprofileStatese.ToList();
+            var sortedProfileStates = profileStates.OrderBy(urn => urn.URN);
+            return sortedProfileStates.ToList();
 
         }
 
