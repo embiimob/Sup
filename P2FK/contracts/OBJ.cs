@@ -2311,7 +2311,7 @@ namespace SUP.P2FK
                             if (!System.IO.Directory.Exists("ipfs/" + transid))
                             {
                                 Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.FileName = @"ipfs\kubos.exe";
                                 process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
                                 process2.Start();
                                 process2.WaitForExit();
@@ -2339,7 +2339,7 @@ namespace SUP.P2FK
                                         {
                                             StartInfo = new ProcessStartInfo
                                             {
-                                                FileName = @"ipfs\ipfs.exe",
+                                                FileName = @"ipfs\kubos.exe",
                                                 Arguments = "pin add " + transid,
                                                 UseShellExecute = false,
                                                 CreateNoWindow = true
@@ -2440,7 +2440,7 @@ namespace SUP.P2FK
                             {
 
                                 Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.FileName = @"ipfs\kubos.exe";
                                 process2.StartInfo.Arguments = "get " + transid + @" -o ipfs\" + transid;
                                 process2.Start();
                                 process2.WaitForExit();
@@ -2469,7 +2469,7 @@ namespace SUP.P2FK
                                         {
                                             StartInfo = new ProcessStartInfo
                                             {
-                                                FileName = @"ipfs\ipfs.exe",
+                                                FileName = @"ipfs\kubos.exe",
                                                 Arguments = "pin add " + transid,
                                                 UseShellExecute = false,
                                                 CreateNoWindow = true

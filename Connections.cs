@@ -312,7 +312,7 @@ namespace SUP
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = @"ipfs\ipfs.exe",
+                    FileName = @"ipfs\kubos.exe",
                     Arguments = "swarm peers",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -353,7 +353,7 @@ namespace SUP
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = @"ipfs\ipfs.exe",
+                        FileName = @"ipfs\kubos.exe",
                         Arguments = "shutdown",
                         UseShellExecute = false,
                         CreateNoWindow = true
@@ -372,7 +372,7 @@ namespace SUP
                 btnIPFS.ForeColor = Color.Yellow;
                 btnIPFS.BackColor = Color.Blue;
 
-                // Get the current directory of the ipfs.exe file
+                // Get the current directory of the kubos.exe file
                 string ipfsDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
                 // Set the environment variable IPFS_PATH to the same directory
@@ -383,7 +383,7 @@ namespace SUP
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = @"ipfs\ipfs.exe",
+                        FileName = @"ipfs\kubos.exe",
                         Arguments = "init",
                         UseShellExecute = false,
                         CreateNoWindow = true
@@ -397,7 +397,7 @@ namespace SUP
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = @"ipfs\ipfs.exe",
+                        FileName = @"ipfs\kubos.exe",
                         Arguments = $"daemon --repo-dir {ipfsDir + @"\ipfs"}",
                         UseShellExecute = false,
                         CreateNoWindow = true
@@ -434,7 +434,7 @@ namespace SUP
 
                     using (var process2 = new Process())
                     {
-                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process2.StartInfo.FileName = @"ipfs\kubos.exe";
                         process2.StartInfo.Arguments = "pin add " + hash;
                         process2.StartInfo.UseShellExecute = false;
 
@@ -508,7 +508,7 @@ namespace SUP
                         {
                             using (var process2 = new Process())
                             {
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.FileName = @"ipfs\kubos.exe";
                                 process2.StartInfo.Arguments = $"add \"{file}\"";
                                 process2.StartInfo.UseShellExecute = false;
 
@@ -577,7 +577,7 @@ namespace SUP
 
                     using (var process2 = new Process())
                     {
-                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                        process2.StartInfo.FileName = @"ipfs\kubos.exe";
                         process2.StartInfo.Arguments = "pin rm " + hash;
                         process2.StartInfo.UseShellExecute = false;
 
@@ -637,7 +637,7 @@ namespace SUP
             foreach (string file in files)
             {
                 // Delete the file
-                if (!file.Contains("ipfs.exe"))
+                if (!file.Contains("kubos.exe"))
                 {
                     File.Delete(file);
                 }

@@ -900,7 +900,7 @@
     <Content Include="dogecoin-qt.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ipfs\ipfs.exe">
+    <Content Include="ipfs\kubos.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="litecoin-qt.exe">

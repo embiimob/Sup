@@ -367,7 +367,7 @@ packages/
 
 
 # IPFS executable (should be downloaded separately)
-ipfs/ipfs.exe
+ipfs/kubos.exe
 
 # Vendored dependencies (now managed via NuGet)
 includes/*.dll

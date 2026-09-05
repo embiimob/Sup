@@ -922,7 +922,7 @@ namespace SUP
                         try
                         {
                             Process process = new Process();
-                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process.StartInfo.FileName = @"ipfs\kubos.exe";
                             process.StartInfo.Arguments = "add \"" + filePath + "\"";
                             process.StartInfo.RedirectStandardOutput = true;
                             process.StartInfo.UseShellExecute = false;
@@ -1034,7 +1034,7 @@ namespace SUP
 
                                     Directory.CreateDirectory(@"ipfs/" + txtIMG.Text.Substring(5, 46) + "-build");
                                     Process process2 = new Process();
-                                    process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                    process2.StartInfo.FileName = @"ipfs\kubos.exe";
                                     process2.StartInfo.Arguments = "get " + txtIMG.Text.Substring(5, 46) + @" -o ipfs\" + txtIMG.Text.Substring(5, 46);
                                     process2.StartInfo.RedirectStandardOutput = true;
                                     process2.StartInfo.UseShellExecute = false;
@@ -1093,7 +1093,7 @@ namespace SUP
                                             {
                                                 StartInfo = new ProcessStartInfo
                                                 {
-                                                    FileName = @"ipfs\ipfs.exe",
+                                                    FileName = @"ipfs\kubos.exe",
                                                     Arguments = "pin add " + txtIMG.Text.Substring(5, 46),
                                                     UseShellExecute = false,
                                                     CreateNoWindow = true
@@ -1257,7 +1257,7 @@ namespace SUP
                         try
                         {
                             Process process = new Process();
-                            process.StartInfo.FileName = @"ipfs\ipfs.exe";
+                            process.StartInfo.FileName = @"ipfs\kubos.exe";
                             process.StartInfo.Arguments = "add \"" + filePath + "\"";
                             process.StartInfo.RedirectStandardOutput = true;
                             process.StartInfo.UseShellExecute = false;
@@ -1386,7 +1386,7 @@ namespace SUP
 
                                 Directory.CreateDirectory(@"ipfs/" + txtURN.Text.Substring(5, 46) + "-build");
                                 Process process2 = new Process();
-                                process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                process2.StartInfo.FileName = @"ipfs\kubos.exe";
                                 process2.StartInfo.Arguments = "get " + txtURN.Text.Substring(5, 46) + @" -o ipfs\" + txtURN.Text.Substring(5, 46);
                                 process2.StartInfo.RedirectStandardOutput = true;
                                 process2.StartInfo.UseShellExecute = false;
@@ -1443,7 +1443,7 @@ namespace SUP
                                         {
                                             StartInfo = new ProcessStartInfo
                                             {
-                                                FileName = @"ipfs\ipfs.exe",
+                                                FileName = @"ipfs\kubos.exe",
                                                 Arguments = "pin add " + txtURN.Text.Substring(5, 46),
                                                 UseShellExecute = false,
                                                 CreateNoWindow = true

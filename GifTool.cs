@@ -234,7 +234,7 @@ namespace SUP
 
                                         Directory.CreateDirectory("ipfs/" + transid + "-build");
                                         Process process2 = new Process();
-                                        process2.StartInfo.FileName = @"ipfs\ipfs.exe";
+                                        process2.StartInfo.FileName = @"ipfs\kubos.exe";
                                         process2.StartInfo.Arguments = "get " + imagepath.Substring(5, 46) + @" -o ipfs\" + transid;
                                         process2.StartInfo.UseShellExecute = false;
                                         process2.StartInfo.CreateNoWindow = true;
@@ -264,7 +264,7 @@ namespace SUP
                                             {
                                                 StartInfo = new ProcessStartInfo
                                                 {
-                                                    FileName = @"ipfs\ipfs.exe",
+                                                    FileName = @"ipfs\kubos.exe",
                                                     Arguments = "pin add " + transid,
                                                     UseShellExecute = false,
                                                     CreateNoWindow = true

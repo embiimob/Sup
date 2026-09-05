@@ -13,7 +13,7 @@ namespace SUP
     /// </summary>
     public static class IpfsHelper
     {
-        private static readonly string IpfsExecutable = @"ipfs\ipfs.exe";
+        private static readonly string IpfsExecutable = @"ipfs\kubos.exe";
         
         /// <summary>
         /// Asynchronously retrieves a file from IPFS with timeout support.
